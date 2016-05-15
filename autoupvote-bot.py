@@ -72,8 +72,7 @@ class WalletRPC(object):
     if self.is_locked():
       return self("unlock", [password])
     return True
-  def import_key(self, wifkey):
-    return self("import_key", [wifkey])
+
   
   def vote(self, voter, author, permlink, weight, broadcast):
     return self("vote", [voter, author, permlink, weight, broadcast])
@@ -211,7 +210,7 @@ def monitor_loop(settings, wallet):
       blocks_processed = blocks_processed+1
       process_block(wallet,settings,last_block,voting_queue)
 
-    if blocks_processed % 10 == 0:
+    if blocks_processed % 100 == 0:
       print "blocks_processed = ", blocks_processed, "last_block = ", last_block, "blocks_to_go = ", current_block - last_block
 
     
@@ -239,7 +238,7 @@ def monitor_loop(settings, wallet):
       time.sleep(SLEEP_GRANULARITY)
     if killer.kill_now:
       break   
-
+    cur_info = wallet.info()
 
 
 
