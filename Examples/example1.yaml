@@ -1,0 +1,15 @@
+# change the settings for your preferences and setup
+settings :
+  wallet_password : walletpword
+  rpc_ip : "127.0.0.1"
+  rpc_port : 8091
+  rpc_user : "rpcuser"
+  rpc_password : "rpcpassword"
+  log_file : "autoupvote.log"
+  debug : true
+  monitor :
+    complexring :
+      your_account_name :
+        random_wait : 0
+        frequency : 1
+

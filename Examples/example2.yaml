@@ -1,0 +1,28 @@
+# change the settings for your preferences and setup
+settings :
+  wallet_password : walletpword
+  rpc_ip : "127.0.0.1"
+  rpc_port : 8091
+  rpc_user : "rpcuser"
+  rpc_password : "rpcpassword"
+  log_file : "autoupvote.log"
+  debug : true
+  monitor :
+    account_to_monitor_1 :
+      account_to_vote_with_1_1 :
+        random_wait : 0
+        frequency : 1
+      account_to_vote_with_1_2 :
+        random_wait : 60 # in seconds
+        frequency : .75  # probability that vote occurs
+    account_to_monitor_2 :
+      account_to_vote_with_2_1 :
+        random_wait : 300 # in seconds
+	frequency : .5 # probability that vote occurs
+    account_to_monitor_3 :
+      account_to_vote_with_3_1 :
+        random_wait : 3600 # in seconds
+        frequency : .3
+      account_to_vote_with_3_2 :
+        random_wait : 10800 # in seconds
+        frequency : .8 # probability that vote occurs
