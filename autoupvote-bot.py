@@ -139,7 +139,10 @@ def process_block(wallet,settings, last_block, voting_queue):
               monitored_account = cur_oper[1]["author"]
               # go through all of the controlled accounts to upvote with and determine if and when 
               for b in settings["monitor"][monitored_account]:
-                if 1-settings["monitor"][monitored_account][b]["frequency"] < random.random():
+                randval = random.random()
+                
+                if 1-settings["monitor"][monitored_account][b]["frequency"] < randval:
+                  print 1-settings["monitor"][monitored_account][b]["frequency"], " < ", randval
                   max_wait = settings["monitor"][monitored_account][b]["random_wait"]
                   wait_in_seconds = random.random()*max_wait
                   vote_command = [b, monitored_account, cur_oper[1]["permlink"], 100, True]
@@ -148,11 +151,13 @@ def process_block(wallet,settings, last_block, voting_queue):
                     time_to_add = wait_in_seconds+time.time()
                     add_to_queue = [time_to_add, vote_command]
                     voting_queue.insert(bisect.bisect_left(voting_queue, add_to_queue, 0, len(voting_queue)), add_to_queue)
-                    print "added command : vote(", b, monitored_account, block_tx_info["permlink"], 100, "False)"
+                    print "added command : vote(", b, monitored_account, cur_oper[1]["permlink"], 100, "True)"
                   else:
                     print "Autovote occured with ", vote_command
-                    wallet.vote(vote_command[0], vote_command[1], vote_command[2], vote_command[3], vote_command[4])
-              
+                    myresponse = wallet.vote(vote_command[0], vote_command[1], vote_command[2], vote_command[3], vote_command[4])
+                    #print myresponse
+                #else:
+                #  print 1-settings["monitor"][monitored_account][b]["frequency"], " > ", randval
 
 
 
@@ -183,6 +188,8 @@ def monitor_loop(settings, wallet):
   cur_info = wallet.info()
   last_block = cur_info["result"]["last_irreversible_block_num"]
 
+#  last_block = 
+
 
   
 
@@ -210,7 +217,7 @@ def monitor_loop(settings, wallet):
       blocks_processed = blocks_processed+1
       process_block(wallet,settings,last_block,voting_queue)
 
-    if blocks_processed % 100 == 0:
+    if blocks_processed % 10 == 0:
       print "blocks_processed = ", blocks_processed, "last_block = ", last_block, "blocks_to_go = ", current_block - last_block
 
     
