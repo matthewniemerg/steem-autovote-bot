@@ -217,8 +217,8 @@ def monitor_loop(settings, wallet):
       blocks_processed = blocks_processed+1
       process_block(wallet,settings,last_block,voting_queue)
 
-    if blocks_processed % 10 == 0:
-      print "blocks_processed = ", blocks_processed, "last_block = ", last_block, "blocks_to_go = ", current_block - last_block
+    if blocks_processed % 200 == 0:
+      print "blocks_processed = ", blocks_processed, "last_block = ", last_block
 
     
       
