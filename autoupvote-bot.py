@@ -217,7 +217,7 @@ def monitor_loop(settings, wallet):
       blocks_processed = blocks_processed+1
       process_block(wallet,settings,last_block,voting_queue)
 
-    if blocks_processed % 200 == 0:
+    if blocks_processed % 20 == 0:
       print "blocks_processed = ", blocks_processed, "last_block = ", last_block
 
     
@@ -229,13 +229,21 @@ def monitor_loop(settings, wallet):
       while keeppopping:
         if current_time > voting_queue[0][0]:
           vote_command = voting_queue.pop(0)
+          time_to_vote = vote_command[0]
+          
+          # now go ahead and vote
+          wallet.vote(vote_command[1][0], vote_command[1][1], vote_command[1][2], vote_command[1][3], vote_command[1][4])
+          print "Voting with vote(", vote_command[1], ")"
+          print "length of voting queue =", len(voting_queue)
+
           if len(voting_queue) == 0:
             keeppopping = False
-          time_to_vote = vote_command[0]
-
-          # now go ahead and vote
-          print "Voting with vote(", vote_command[1], ")"
-          wallet.vote(vote_command[1][0], vote_command[1][1], vote_command[1][2], vote_command[1][3], vote_command[1][4])
+          else :
+            print "next vote broadcast will occur in ", time.time() - voting_queue[0][0], " -- negative time indicates continued broadcasting of votes in queue"
+        else :
+          keeppopping = False
+          if len(voting_queue) != 0:
+            print "waiting to vote for :", time.time() - voting_queue[0][0], "seconds" 
 
     cur_info = wallet.info()
     while (time.time() - loop_time) < (min_pub_intrvl * LOOP_GRANULARITY):
