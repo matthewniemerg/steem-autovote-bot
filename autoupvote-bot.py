@@ -217,10 +217,11 @@ def monitor_loop(settings, wallet):
       blocks_processed = blocks_processed+1
       process_block(wallet,settings,last_block,voting_queue)
 
-    if blocks_processed % 20 == 0:
+    if blocks_processed % 100 == 0:
       print "blocks_processed = ", blocks_processed, "last_block = ", last_block
-
-    
+      if (len(voting_queue)) != 0:
+        print "There are", len(voting_queue), "votes in the queue."
+        print "Next vote broadcast in", time.time() - voting_queue[0][0], "seconds"
       
     if len(voting_queue) != 0:
       keeppopping = True
@@ -239,7 +240,7 @@ def monitor_loop(settings, wallet):
           if len(voting_queue) == 0:
             keeppopping = False
           else :
-            print "next vote broadcast will occur in ", time.time() - voting_queue[0][0], " -- negative time indicates continued broadcasting of votes in queue"
+            print "next vote broadcast will occur in", time.time() - voting_queue[0][0], "-- negative time indicates continued broadcasting of votes in queue"
         else :
           keeppopping = False
           if len(voting_queue) != 0:
