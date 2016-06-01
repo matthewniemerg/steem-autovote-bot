@@ -87,6 +87,9 @@ class WalletRPC(object):
   def get_block(self, block_num):
     return self("get_block", [block_num])
 
+  def get_state(self, state):
+    return self("get_state", [state])
+  
 def timestamp(dt):
   delta = dt - datetime.datetime(1970, 1, 1)
   return delta.total_seconds()
@@ -140,24 +143,30 @@ def process_block(wallet,settings, last_block, voting_queue):
               # go through all of the controlled accounts to upvote with and determine if and when 
               for b in settings["monitor"][monitored_account]:
                 randval = random.random()
-                
+                vote_command = [b, monitored_account, cur_oper[1]["permlink"], 100, True]
                 if 1-settings["monitor"][monitored_account][b]["frequency"] < randval:
                   # print 1-settings["monitor"][monitored_account][b]["frequency"], " < ", randval
                   max_wait = settings["monitor"][monitored_account][b]["random_wait"]
                   wait_in_seconds = random.random()*max_wait
-                  vote_command = [b, monitored_account, cur_oper[1]["permlink"], 100, True]
-                  
-                  if wait_in_seconds != 0:
-                    time_to_add = wait_in_seconds+time.time()
-                    add_to_queue = [time_to_add, vote_command]
-                    voting_queue.insert(bisect.bisect_left(voting_queue, add_to_queue, 0, len(voting_queue)), add_to_queue)
-                    print "will broadcast vote(", b, monitored_account, cur_oper[1]["permlink"], 100, "True)", "in", wait_in_seconds, "seconds"
+                  state_to_get = cur_oper[1]["parent_permlink"]+"/@"+cur_oper[1]["author"]+"/"+cur_oper[1]["permlink"]
+                  my_state = wallet.get_state(state_to_get)["result"]
+                  a_new_key = cur_oper[1]["author"]+"/"+cur_oper[1]["permlink"]                  
+                  some_more_info = my_state["content"][a_new_key]
+
+                  if some_more_info["last_update"] == some_more_info["created"]:
+                    if wait_in_seconds != 0:
+                      time_to_add = wait_in_seconds+time.time()
+                      add_to_queue = [time_to_add, vote_command]
+                      voting_queue.insert(bisect.bisect_left(voting_queue, add_to_queue, 0, len(voting_queue)), add_to_queue)
+                      print "will broadcast vote(", b, monitored_account, cur_oper[1]["permlink"], 100, "True)", "in", wait_in_seconds, "seconds"
+                    else:
+                      print "Autovote occured with ", vote_command
+                      myresponse = wallet.vote(vote_command[0], vote_command[1], vote_command[2], vote_command[3], vote_command[4])
+                  #print myresponse
                   else:
-                    print "Autovote occured with ", vote_command
-                    myresponse = wallet.vote(vote_command[0], vote_command[1], vote_command[2], vote_command[3], vote_command[4])
-                    #print myresponse
-                #else:
-                #  print 1-settings["monitor"][monitored_account][b]["frequency"], " > ", randval
+                    print "Bot scanned editted post, not upvoting."
+                else:
+                  print "Probability of voting event occuring failed.  Did not add vote(", vote_command, ")."
 
 
 
