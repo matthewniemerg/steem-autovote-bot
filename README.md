@@ -24,6 +24,20 @@ can be installed with the following command:
 sudo apt-get install python-yaml python-requests
 ```
 
+Depending on your system's python configuration, additional python packages may need to be installed.
+First, we will need to install python's pip.
+
+```
+sudo easy_install pip
+```
+
+Once pip is installed, we can install the other packages.  This is accomplished with the following command:
+
+```
+sudo pip install python-dateutil
+```
+
+
 Configuration
 =====================
 
