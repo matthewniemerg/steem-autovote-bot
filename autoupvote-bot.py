@@ -148,7 +148,7 @@ def process_block(wallet,settings, last_block, voting_queue):
                   min_wait = settings["monitor"][monitored_account][b]["min_random_wait"]
                   max_wait = min_wait
                   if 'max_random_wait' in settings["monitor"][monitored_account][b].keys():
-                    max_wait = settings["monitor"][monitored_account][b]["random_wait"]
+                    max_wait = settings["monitor"][monitored_account][b]["max_random_wait"]
                   wait_in_seconds = random.random()*(max_wait-min_wait) + min_wait
                   state_to_get = cur_oper[1]["parent_permlink"]+"/@"+cur_oper[1]["author"]+"/"+cur_oper[1]["permlink"]
                   my_state = wallet.get_state(state_to_get)["result"]
