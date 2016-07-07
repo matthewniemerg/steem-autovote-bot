@@ -10,6 +10,7 @@ settings :
   monitor :
     complexring :
       your_account_name :
-        random_wait : 0
+        min_random_wait : 100
+	max_random_wait : 800
         frequency : 1
 

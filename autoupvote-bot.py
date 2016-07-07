@@ -145,16 +145,18 @@ def process_block(wallet,settings, last_block, voting_queue):
                 randval = random.random()
                 vote_command = [b, monitored_account, cur_oper[1]["permlink"], 100, True]
                 if 1-settings["monitor"][monitored_account][b]["frequency"] < randval:
-                  # print 1-settings["monitor"][monitored_account][b]["frequency"], " < ", randval
-                  max_wait = settings["monitor"][monitored_account][b]["random_wait"]
-                  wait_in_seconds = random.random()*max_wait
+                  min_wait = settings["monitor"][monitored_account][b]["min_random_wait"]
+                  max_wait = min_wait
+                  if 'max_random_wait' in settings["monitor"][monitored_account][b].keys():
+                    max_wait = settings["monitor"][monitored_account][b]["random_wait"]
+                  wait_in_seconds = random.random()*(max_wait-min_wait + 1) + min_wait
                   state_to_get = cur_oper[1]["parent_permlink"]+"/@"+cur_oper[1]["author"]+"/"+cur_oper[1]["permlink"]
                   my_state = wallet.get_state(state_to_get)["result"]
                   a_new_key = cur_oper[1]["author"]+"/"+cur_oper[1]["permlink"]                  
                   some_more_info = my_state["content"][a_new_key]
 
                   if some_more_info["last_update"] == some_more_info["created"]:
-                    if wait_in_seconds != 0:
+                    if wait_in_seconds > 0:
                       time_to_add = wait_in_seconds+time.time()
                       add_to_queue = [time_to_add, vote_command]
                       voting_queue.insert(bisect.bisect_left(voting_queue, add_to_queue, 0, len(voting_queue)), add_to_queue)
